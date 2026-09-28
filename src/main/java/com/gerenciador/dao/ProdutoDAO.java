@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProdutoDAO {
 
-    public void salvar(Produto produto) {
+    public boolean salvar(Produto produto) {
 
         Session session = null;
         Transaction transaction = null;
@@ -22,6 +22,8 @@ public class ProdutoDAO {
 
             transaction.commit();
 
+            return true;
+
         } catch (Exception e) {
 
             if (transaction != null) {
@@ -29,6 +31,7 @@ public class ProdutoDAO {
             }
 
             e.printStackTrace();
+            return false;
 
         } finally {
 
@@ -53,7 +56,7 @@ public class ProdutoDAO {
         }
     }
 
-    public void atualizar(Produto produto) {
+    public boolean atualizar(Produto produto) {
 
         Session session = null;
         Transaction transaction = null;
@@ -66,6 +69,8 @@ public class ProdutoDAO {
 
             transaction.commit();
 
+            return true;
+
         } catch (Exception e) {
 
             if (transaction != null) {
@@ -73,6 +78,7 @@ public class ProdutoDAO {
             }
 
             e.printStackTrace();
+            return false;
 
         } finally {
 
@@ -82,7 +88,7 @@ public class ProdutoDAO {
         }
     }
 
-    public void remover(Long id) {
+    public boolean remover(Long id) {
 
         Session session = null;
         Transaction transaction = null;
@@ -93,11 +99,15 @@ public class ProdutoDAO {
 
             Produto produto = session.get(Produto.class, id);
 
-            if (produto != null) {
-                session.remove(produto);
+            if (produto == null) {
+                transaction.rollback();
+                return false;
             }
 
+            session.remove(produto);
             transaction.commit();
+
+            return true;
 
         } catch (Exception e) {
 
@@ -106,6 +116,7 @@ public class ProdutoDAO {
             }
 
             e.printStackTrace();
+            return false;
 
         } finally {
 
